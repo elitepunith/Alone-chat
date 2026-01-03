@@ -1,0 +1,16 @@
+{
+  "name": "alone",
+  "version": "1.0.0",
+  "description": "Private chat app for friends and family",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "crypto-js": "^4.2.0",
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5",
+    "sqlite3": "^5.1.7"
+  }
+}

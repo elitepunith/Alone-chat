@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Alone Chat</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="chat-body">
+
+<div class="chat-header">Alone</div>
+<div id="messages"></div>
+
+<div class="chat-input">
+  <input id="msg" placeholder="Type a message">
+  <button onclick="send()">Send</button>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
