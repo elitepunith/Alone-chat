@@ -1,3 +1,3 @@
-node_modules/
-server/database.db
+node_modules
 .env
+alone.db
