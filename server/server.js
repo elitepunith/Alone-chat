@@ -1,144 +1,153 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const path = require('path');
-const db = require('./database');
-const { encrypt, decrypt } = require('./crypto');
-require('dotenv').config();
+const bcrypt = require('bcryptjs');
+const db = require('./database'); 
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, { cors: { origin: "*" } });
 
+app.use(express.static('public'));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../public')));
 
-// --- Middleware ---
-const authenticateToken = (req, res, next) => {
-    const token = req.headers['authorization'];
-    if (!token) return res.sendStatus(401);
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-        if (err) return res.sendStatus(403);
-        req.user = user;
-        next();
-    });
-};
+const onlineUsers = new Set();
 
-// --- API Routes ---
+function getTime() {
+    return new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+}
 
-// Login
-app.post('/api/login', async (req, res) => {
-    const { username, password } = req.body;
-    const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
-    
-    if (!user || !await bcrypt.compare(password, user.password_hash)) {
-        return res.status(401).json({ error: "Invalid credentials" });
-    }
-    
-    // Update last seen
-    db.prepare('UPDATE users SET last_seen = CURRENT_TIMESTAMP WHERE id = ?').run(user.id);
-
-    const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, process.env.JWT_SECRET);
-    res.json({ token, role: user.role, username: user.username });
-});
-
-// Admin: Create User
-app.post('/api/users', authenticateToken, async (req, res) => {
-    if (req.user.role !== 'admin') return res.sendStatus(403);
-    const { username, password, role } = req.body;
-    const hash = await bcrypt.hash(password, 10);
-    try {
-        db.prepare('INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)').run(username, hash, role || 'user');
-        res.json({ success: true });
-    } catch (e) {
-        res.status(400).json({ error: "Username exists" });
-    }
-});
-
-// Get My Chats
-app.get('/api/chats', authenticateToken, (req, res) => {
-    const chats = db.prepare(`
-        SELECT c.id, c.type, c.name, 
-        (SELECT content FROM messages WHERE chat_id = c.id ORDER BY created_at DESC LIMIT 1) as last_msg,
-        (SELECT created_at FROM messages WHERE chat_id = c.id ORDER BY created_at DESC LIMIT 1) as last_time
-        FROM chats c
-        JOIN chat_members cm ON c.id = cm.chat_id
-        WHERE cm.user_id = ?
-    `).all(req.user.id);
-    res.json(chats);
-});
-
-// Create Group
-app.post('/api/chats', authenticateToken, (req, res) => {
-    const { name, userIds } = req.body; // userIds is array of IDs
-    const createChat = db.transaction(() => {
-        const result = db.prepare("INSERT INTO chats (type, name) VALUES ('group', ?)").run(name);
-        const chatId = result.lastInsertRowid;
-        db.prepare("INSERT INTO chat_members (chat_id, user_id) VALUES (?, ?)").run(chatId, req.user.id); // Add self
-        userIds.forEach(uid => {
-            db.prepare("INSERT INTO chat_members (chat_id, user_id) VALUES (?, ?)").run(chatId, uid);
-        });
-        return chatId;
-    });
-    res.json({ chatId: createChat() });
-});
-
-// Get Messages (Decrypted)
-app.get('/api/chats/:id/messages', authenticateToken, (req, res) => {
-    // Security: Check if user belongs to chat
-    const member = db.prepare('SELECT * FROM chat_members WHERE chat_id = ? AND user_id = ?').get(req.params.id, req.user.id);
-    if (!member) return res.sendStatus(403);
-
-    const messages = db.prepare('SELECT m.*, u.username FROM messages m JOIN users u ON m.sender_id = u.id WHERE m.chat_id = ? ORDER BY m.created_at ASC').all(req.params.id);
-    
-    // Decrypt messages before sending to frontend
-    const decryptedMessages = messages.map(msg => ({
-        ...msg,
-        content: decrypt({ content: msg.content, iv: msg.iv })
-    }));
-    
-    res.json(decryptedMessages);
-});
-
-// Get All Users (For creating groups/admin)
-app.get('/api/users', authenticateToken, (req, res) => {
-    const users = db.prepare('SELECT id, username, role, last_seen, is_active FROM users').all();
-    res.json(users);
-});
-
-// --- Real-time Socket.io ---
 io.on('connection', (socket) => {
-    socket.on('joinRoom', ({ chatId, token }) => {
-        // Validate token inside socket for security
+
+    // --- NORMAL LOGIN ---
+    socket.on('login', async ({ username, password }) => {
         try {
-            const user = jwt.verify(token, process.env.JWT_SECRET);
-            socket.join(`chat_${chatId}`);
-        } catch(e) { console.error("Socket auth failed"); }
+            const res = await db.query('SELECT * FROM users WHERE username = $1', [username]);
+            let user = res.rows[0];
+
+            // Emergency Admin Check
+            if (!user && username === 'Admin' && password === 'admin123') {
+                const hash = bcrypt.hashSync('admin123', 10);
+                const color = '#7289da';
+                const newRes = await db.query(
+                    'INSERT INTO users (username, password, avatar_color, isAdmin) VALUES ($1, $2, $3, $4) RETURNING *',
+                    ['Admin', hash, color, true]
+                );
+                user = newRes.rows[0];
+            }
+
+            if (user && bcrypt.compareSync(password, user.password)) {
+                setupUserSession(socket, user);
+            } else {
+                socket.emit('login_error', 'Invalid Credentials');
+            }
+        } catch (e) { console.error(e); }
     });
 
-    socket.on('sendMessage', ({ chatId, content, token }) => {
+    // --- RELOGIN (Auto-Login on Refresh) ---
+    socket.on('relogin', async ({ user_id }) => {
         try {
-            const user = jwt.verify(token, process.env.JWT_SECRET);
-            const encrypted = encrypt(content);
-            
-            const result = db.prepare('INSERT INTO messages (chat_id, sender_id, content, iv) VALUES (?, ?, ?, ?)').run(chatId, user.id, encrypted.content, encrypted.iv);
-            
-            const messageData = {
-                id: result.lastInsertRowid,
-                chat_id: chatId,
-                sender_id: user.id,
-                username: user.username,
-                content: content, // Send plain text back to clients in room
-                created_at: new Date().toISOString()
-            };
+            const res = await db.query('SELECT * FROM users WHERE id = $1', [user_id]);
+            const user = res.rows[0];
+            if (user) {
+                setupUserSession(socket, user);
+            } else {
+                socket.emit('login_error', 'Session Expired');
+            }
+        } catch (e) { console.error(e); }
+    });
 
-            io.to(`chat_${chatId}`).emit('receiveMessage', messageData);
-        } catch(e) { console.error("Msg Error", e); }
+    // Helper to join rooms and send data
+    async function setupUserSession(socket, user) {
+        const userId = parseInt(user.id);
+        socket.userData = { id: userId, username: user.username, color: user.avatar_color, isAdmin: user.isadmin };
+        socket.join(`user_${userId}`);
+        onlineUsers.add(userId);
+
+        socket.emit('login_success', socket.userData);
+        
+        const uRes = await db.query('SELECT id, username, avatar_color FROM users');
+        const gRes = await db.query('SELECT * FROM groups');
+        socket.emit('init_data', { users: uRes.rows, groups: gRes.rows, online_ids: Array.from(onlineUsers) });
+        
+        socket.broadcast.emit('user_status', { id: userId, status: 'online' });
+    }
+
+    // LOAD HISTORY
+    socket.on('get_history', async ({ target_id, is_group }) => {
+        if (!socket.userData) return;
+        const myId = socket.userData.id;
+        const otherId = parseInt(target_id);
+
+        try {
+            let res;
+            if (is_group) {
+                res = await db.query('SELECT * FROM messages WHERE group_id = $1 ORDER BY timestamp ASC', [otherId]);
+            } else {
+                res = await db.query(
+                    'SELECT * FROM messages WHERE (sender_id = $1 AND receiver_id = $2) OR (sender_id = $2 AND receiver_id = $1) ORDER BY timestamp ASC',
+                    [myId, otherId]
+                );
+            }
+            socket.emit('history_loaded', res.rows);
+        } catch (e) { console.error(e); }
+    });
+
+    // ADMIN ACTIONS
+    socket.on('admin_create_user', async ({ newUsername, newPassword }) => {
+        if (!socket.userData?.isAdmin) return;
+        const hash = bcrypt.hashSync(newPassword, 10);
+        const color = '#' + Math.floor(Math.random()*16777215).toString(16);
+        try {
+            await db.query('INSERT INTO users (username, password, avatar_color) VALUES ($1, $2, $3)', [newUsername, hash, color]);
+            const u = await db.query('SELECT id, username, avatar_color FROM users');
+            const g = await db.query('SELECT * FROM groups');
+            io.emit('refresh_data', { users: u.rows, groups: g.rows });
+            socket.emit('notification', `User created!`);
+        } catch (e) { socket.emit('notification', 'Username taken.'); }
+    });
+
+    socket.on('admin_create_group', async ({ groupName }) => {
+        if (!socket.userData?.isAdmin) return;
+        const color = '#' + Math.floor(Math.random()*16777215).toString(16);
+        try {
+            await db.query('INSERT INTO groups (name, avatar_color) VALUES ($1, $2)', [groupName, color]);
+            const u = await db.query('SELECT id, username, avatar_color FROM users');
+            const g = await db.query('SELECT * FROM groups');
+            io.emit('refresh_data', { users: u.rows, groups: g.rows });
+            socket.emit('notification', `Group created!`);
+        } catch (e) { socket.emit('notification', 'Name taken.'); }
+    });
+
+    // MESSAGING
+    socket.on('send_message', async (data) => {
+        const sender_id = parseInt(data.sender_id);
+        const target_id = parseInt(data.target_id);
+        const content = data.content;
+        const is_group = data.is_group;
+        const time = getTime();
+
+        try {
+            let res;
+            if (is_group) {
+                res = await db.query('INSERT INTO messages (sender_id, group_id, content, status) VALUES ($1, $2, $3, $4) RETURNING id', [sender_id, target_id, content, 'sent']);
+                io.emit('receive_message', { id: res.rows[0].id, sender_id, group_id: target_id, is_group: true, content, timestamp: time, status: 'sent' });
+            } else {
+                res = await db.query('INSERT INTO messages (sender_id, receiver_id, content, status) VALUES ($1, $2, $3, $4) RETURNING id', [sender_id, target_id, content, 'sent']);
+                const msg = { id: res.rows[0].id, sender_id, receiver_id: target_id, is_group: false, content, timestamp: time, status: 'sent' };
+                io.to(`user_${target_id}`).emit('receive_message', msg);
+                socket.emit('receive_message', msg);
+            }
+        } catch (e) { console.error(e); }
+    });
+
+    socket.on('disconnect', () => {
+        if (socket.userData) {
+            onlineUsers.delete(socket.userData.id);
+            io.emit('user_status', { id: socket.userData.id, status: 'offline' });
+        }
     });
 });
 
-server.listen(process.env.PORT || 3000, () => {
-    console.log(`Alone Server running on port ${process.env.PORT || 3000}`);
-});
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => { console.log(`Server running on port ${PORT}`); });
