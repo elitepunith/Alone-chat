@@ -6,19 +6,19 @@
 
 <br />
 <div align="center">
-  <a href="https://github.com/elitepunith/Alone-Chat">
+  <a href="https://alone-chat.onrender.com/">
     <img src="https://cdn-icons-png.flaticon.com/512/1041/1041916.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Alone-Chat</h3>
 
   <p align="center">
-    A secure, private communication sanctuary for friends and family.
+    <strong>Secure. Private. Fast.</strong>
     <br />
-    <a href="https://github.com/elitepunith/Alone-Chat"><strong>Explore the docs »</strong></a>
+    A minimalist communication platform for friends and family.
     <br />
     <br />
-    <a href="https://github.com/elitepunith/Alone-Chat">View Demo</a>
+    <a href="https://alone-chat.onrender.com/"><strong>🔴 View Live Demo</strong></a>
     ·
     <a href="https://github.com/elitepunith/Alone-Chat/issues">Report Bug</a>
     ·
@@ -37,35 +37,29 @@
     </li>
     <li>
       <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
   </ol>
 </details>
 
 ## 📖 About The Project
 
-![Alone-Chat Screen Shot](https://via.placeholder.com/800x400?text=Alone-Chat+Screenshot+Coming+Soon)
+![Alone-Chat Screenshot](https://via.placeholder.com/800x400?text=Paste+Your+Website+Screenshot+Here)
 
-In an age of noisy social media and algorithmic feeds, **Alone-Chat** brings communication back to its roots. It is designed as a quiet, private digital room where you can connect with specific friends and family members without distractions.
+**Alone-Chat** is designed to cut through the noise. It is a dedicated space for real-time communication that prioritizes speed and privacy over flashy distractions.
 
-**Key Objectives:**
-* **Privacy First:** No tracking, no ads, just chat.
-* **Simplicity:** A minimalist UI that focuses on the conversation.
-* **Security:** Accounts are private and secure.
+**🌟 Key Features:**
+* **⚡ Fast & Responsive:** Instant message delivery.
+* **👥 Group Management:** Easily create groups and manage users.
+* **🔒 Secure Login:** Protected admin and user access.
+* **📱 Minimalist UI:** Clean "Admin" and "Chat" interfaces designed for focus.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### 🏗️ Built With
-
-This project leverages the following technologies:
 
 * ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
 * ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
@@ -77,63 +71,41 @@ This project leverages the following technologies:
 
 ## 🚀 Getting Started
 
-To get a local copy up and running, follow these simple steps.
+To run this project locally on your machine:
 
-### Prerequisites
-
-* npm
-    ```sh
-    npm install npm@latest -g
-    ```
-
-### Installation
-
-1.  Clone the repo
+1.  **Clone the repo**
     ```sh
     git clone [https://github.com/elitepunith/Alone-Chat.git](https://github.com/elitepunith/Alone-Chat.git)
-    ```
-2.  Navigate to the directory
-    ```sh
     cd Alone-Chat
     ```
-3.  Install NPM packages
+2.  **Install dependencies**
     ```sh
     npm install
     ```
-4.  Create a `.env` file in the root directory for your variables (e.g., DB URI, Port).
-5.  Start the server
+3.  **Configure Environment**
+    Create a `.env` file and add your database/port details.
+4.  **Start the server**
     ```sh
     npm start
     ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## 💻 Usage
-
-Once the server is running, navigate to `http://localhost:3000` (or your configured port).
-1.  **Register** a new account.
-2.  **Create a Room** or join an existing one using a unique ID.
-3.  **Start Chatting** instantly.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 ## 🗺️ Roadmap
 
-- [x] Basic Login/Register System
-- [x] Real-time Messaging
-- [ ] **Dark Mode** support
-- [ ] Image/File Sharing
+- [x] **Live Deployment** (Render)
+- [x] User Authentication
+- [x] Group Chat Creation
+- [ ] Mobile-Responsive Polish
 - [ ] End-to-End Encryption
-- [ ] Mobile-Responsive Improvements
 
-See the [open issues](https://github.com/elitepunith/Alone-Chat/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/elitepunith/Alone-Chat/issues) for more.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## 🤝 Contributing
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
+Contributions are welcome!
 1.  Fork the Project
 2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
 3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
@@ -142,17 +114,11 @@ Contributions are what make the open source community such an amazing place to l
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## 📝 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 ## 📞 Contact
 
 **Elite Punith** - [GitHub Profile](https://github.com/elitepunith)
 
-Project Link: [https://github.com/elitepunith/Alone-Chat](https://github.com/elitepunith/Alone-Chat)
+**Live Project:** [https://alone-chat.onrender.com/](https://alone-chat.onrender.com/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
