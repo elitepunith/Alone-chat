@@ -1,3 +1,36 @@
-node_modules
+# Dependencies
+node_modules/
+jspm_packages/
+
+# Environment variables (IMPORTANT: keeps secrets safe)
 .env
-alone.db
+.env.test
+.env.production
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editors and IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Build outputs (if you use a build step later)
+dist/
+build/
+coverage/
