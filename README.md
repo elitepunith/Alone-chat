@@ -19,6 +19,17 @@ The project is fully deployed on cloud infrastructure and uses a production-grad
 
 ---
 
+
+
+## 🔐 Login Interface
+
+<p align="center">
+  <img src="assets/login.png" alt="Alone Chat Login Screen" width="800" />
+</p>
+
+
+---
+
 ## 🚀 Features
 
 * 🔐 **Controlled Authentication**
