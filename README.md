@@ -1,132 +1,132 @@
-
-
-```md
 <p align="center">
   <img src="assets/banner.png" alt="Alone Chat – Secure. Private. Fast." />
 </p>
 
-# 💬 Alone Chat  
-**Secure. Private. Fast.**
+# 💬 Alone-Chat
 
-🌐 **Live Demo:** https://alone-chat.onrender.com/
+**A Private, Real-Time Chat Application**
+
+🌐 **Live Demo:** [https://alone-chat.onrender.com/](https://alone-chat.onrender.com/)
 
 ---
 
 ## 📌 Overview
 
-**Alone Chat** is a private, real-time chat application built for secure communication between trusted users.  
-The platform does **not** allow public sign-ups — users and groups are created and managed internally to ensure privacy, control, and safety.
+**Alone-Chat** is a private, real-time chat application built for secure communication between trusted users.
+The platform does not support public sign-ups; instead, users and groups are managed internally to maintain privacy and control.
 
-The project is fully deployed using modern cloud infrastructure and backed by a production-grade database, making it suitable for real-world usage and further development.
-
----
-
-## 🔐 Login Interface
-
-<p align="center">
-  <img src="assets/login.png" alt="Alone Chat Login Screen" width="800" />
-</p>
-
-The login screen features a modern glassmorphism-inspired design focused on simplicity, accessibility, and security.
+The project is fully deployed on cloud infrastructure and uses a production-grade database, making it suitable for real-world use and further extension.
 
 ---
 
 ## 🚀 Features
 
-### 🔐 Controlled Authentication
-- No public registration
-- Admin-controlled user creation
-- Secure password hashing using bcrypt
+* 🔐 **Controlled Authentication**
 
-### 💬 Real-Time Messaging
-- One-to-one private chats
-- Group conversations
-- Instant message delivery using WebSockets (Socket.IO)
+  * No public registration
+  * Users are created manually (admin-controlled)
+  * Passwords securely hashed using bcrypt
 
-### 🗂️ Persistent Chat History
-- Messages stored in PostgreSQL
-- Automatic chat history loading
+* 💬 **Real-Time Messaging**
 
-### 🟢 Online / Offline Status
-- Live user presence tracking
-- Instant status updates
+  * One-to-one private chats
+  * Group chats
+  * Instant message delivery via WebSockets
 
-### 🔁 Auto Session Restore
-- Session persists across page refresh
-- Smooth experience using browser storage
+* 🗂️ **Persistent Chat History**
 
-### 🎨 Modern & Responsive UI
-- Clean, minimal design
-- Glassmorphism login screen
-- Works smoothly on desktop and mobile devices
+  * Messages stored in PostgreSQL
+  * Chat history loads automatically when a conversation is opened
+
+* 🟢 **Online / Offline Status**
+
+  * Live user presence tracking
+  * Instant status updates
+
+* 🔁 **Auto Session Restore**
+
+  * Logged-in users remain signed in after refresh
+  * Smooth user experience using browser storage
+
+* 🎨 **Modern & Responsive UI**
+
+  * Glassmorphism-style login screen
+  * Clean chat interface
+  * Works on desktop and mobile devices
 
 ---
 
 ## 🧱 Tech Stack
 
 ### Frontend
-- HTML5  
-- CSS3 (custom responsive styling)  
-- Vanilla JavaScript  
-- Google Fonts & Material Icons  
+
+* HTML5
+* CSS3 (custom responsive design)
+* Vanilla JavaScript
+* Google Fonts & Material Icons
 
 ### Backend
-- Node.js  
-- Express.js  
-- Socket.IO  
-- bcryptjs  
+
+* Node.js
+* Express.js
+* Socket.IO (WebSockets)
+* bcryptjs (password hashing)
 
 ### Database
-- PostgreSQL  
-- Neon (serverless PostgreSQL)
+
+* PostgreSQL
+* Neon (serverless PostgreSQL)
 
 ### Deployment
-- Render (application hosting)  
-- Neon (database hosting)
+
+* Render (backend & hosting)
+* Neon (database)
 
 ---
 
 ## 🌐 Live Deployment
 
-👉 **https://alone-chat.onrender.com/**
+The application is live and publicly accessible:
 
-- Backend deployed on **Render**
-- Database hosted on **Neon**
-- Secure environment variables used
-- Fully cloud-based deployment
+👉 **[https://alone-chat.onrender.com/](https://alone-chat.onrender.com/)**
+
+* Backend hosted on **Render**
+* Database hosted on **Neon**
+* Environment variables used for secure credentials
+* Fully cloud-deployed (not local-only)
 
 ---
 
 ## 🔑 Test Account (For Review & Testing)
 
-Use the credentials below to test the application:
+You can use the following credentials to test the application:
 
 ```
-
 Username: testing
 Password: testing123
-
 ```
 
-> Provided strictly for demonstration and review purposes.
+> This account is provided for testing purposes only.
 
 ---
 
 ## 🔄 How the System Works
 
-1. User logs in via a WebSocket connection  
-2. Server validates credentials using PostgreSQL and bcrypt  
-3. User joins a private Socket.IO room  
-4. Messages are stored in the database and delivered instantly  
-5. Online/offline status updates in real time  
-6. Session is automatically restored on refresh  
+1. User logs in via WebSocket connection
+2. Server validates credentials using PostgreSQL and bcrypt
+3. User joins a private Socket.IO room
+4. Messages are:
+
+   * Stored in the database
+   * Delivered instantly to the receiver
+5. Online status updates in real time
+6. Session is restored automatically on page refresh
 
 ---
 
 ## 📂 Project Structure
 
 ```
-
 alone-chat/
 │
 ├── public/
@@ -139,44 +139,40 @@ alone-chat/
 ├── package.json
 ├── package-lock.json
 └── README.md
-
 ```
 
 ---
 
 ## 🧠 What I Learned
 
-- Designing real-time applications using WebSockets  
-- Implementing secure authentication with password hashing  
-- Managing sessions across browser refreshes  
-- Working with cloud-hosted PostgreSQL databases  
-- Debugging and deploying full-stack applications  
-- Maintaining a production-ready backend  
+* Building real-time systems using WebSockets
+* Secure authentication with password hashing
+* Managing user sessions across refreshes
+* Working with cloud-hosted PostgreSQL databases
+* Debugging issues that appear only in production
+* Deploying and maintaining a full-stack application
 
 ---
 
 ## 🚧 Future Improvements
 
-- 🔒 End-to-End Encryption  
-- ✔️ Message delivery and read receipts  
-- 🧾 Message editing and deletion  
-- 👥 Group member management  
-- 📱 Progressive Web App (PWA) support  
+* 🔒 End-to-End Encryption
+* ✔️ Message delivery & read receipts
+* 🧾 Message editing and deletion
+* 👥 Group member management
+* 📱 Progressive Web App (PWA) support
 
 ---
 
 ## 📜 License
 
-This project is licensed under the **MIT License**.  
+This project is licensed under the **MIT License**.
 You are free to use, modify, and learn from it.
 
 ---
 
 ## 👨‍💻 Author
 
-**elitepunith**  
-Computer Science & Engineering Student  
-Aspiring Cybersecurity Professional
-```
+**elitepunith**
 
 ---
