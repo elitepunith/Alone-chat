@@ -180,18 +180,3 @@ Aspiring Cybersecurity Professional
 ```
 
 ---
-
-## 📁 Important (Don’t Skip This)
-
-Make sure your repo has this structure:
-
-```
-assets/
-├── banner.png
-└── login.png
-```
-
-* `banner.png` → your project banner
-* `login.png` → the login page screenshot you shared
-
----
