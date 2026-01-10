@@ -1,5 +1,4 @@
 
-```md
 <p align="center">
   <img src="assets/banner.png" alt="Alone Chat – Secure. Private. Fast." />
 </p>
