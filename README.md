@@ -175,5 +175,3 @@ This project is licensed under the **MIT License**.
 Computer Science & Engineering Student  
 Aspiring Cybersecurity Professional
 ```
-
----
